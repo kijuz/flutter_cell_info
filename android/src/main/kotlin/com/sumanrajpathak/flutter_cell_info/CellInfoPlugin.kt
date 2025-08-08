@@ -33,25 +33,32 @@ class CellInfoPlugin : FlutterPlugin, MethodCallHandler {
         shared_preference.setMethodCallHandler(this)
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        if (call.method == "cell_info") {
-
-            val net = NetMonster()
-            net.requestData(context!!, result)
-
-        } else if (call.method == "sim_info") {
-
-            val net = NetMonster()
-            net.simsInfo(context!!, result)
-
-        } else if (call.method == "shared_preference") {
-            result.success(SharedHelper.getString(context, "cells_info_response"))
-        } else {
-            result.notImplemented()
-        }
+	override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    // Controlla se il contesto è nullo prima di procedere
+    if (context == null) {
+        result.error("context_not_initialized", "Plugin context is null.", null)
+        return
     }
+
+    if (call.method == "cell_info") {
+        val net = NetMonster()
+        net.requestData(context!!, result)
+    } else if (call.method == "sim_info") {
+        val net = NetMonster()
+        net.simsInfo(context!!, result)
+    } else if (call.method == "shared_preference") {
+        result.success(SharedHelper.getString(context, "cells_info_response"))
+    } else {
+        result.notImplemented()
+    }
+}
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         cellInfoChannel.setMethodCallHandler(null)
     }
 }
+
+
+
+
+
